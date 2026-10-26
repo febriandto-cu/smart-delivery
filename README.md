@@ -36,9 +36,24 @@ lima pemateri teknis mendapat modul masing-masing, Daffa tes/eksperimen.
 Menu **UAS Workspace** tetap menyimpan cakupan 12 sesi, target level dan audit
 bukti. Status file/smoke test tidak berarti seluruh rubrik UAS terpenuhi.
 
+Menu **Evidence & Dataset** menyediakan lima tab untuk anggota/dosen: dataset
+beserta distribusi prioritas/status, delapan pemeriksaan algoritma dengan
+input–expected–actual, riwayat aksi demo, benchmark/log tes dari session, dan
+paket ZIP. Pilih sumber **Dataset aplikasi** atau **Demo presentasi**. Tanpa aksi
+demo, halaman menampilkan contoh awal dengan label eksplisit. CSV sumber tidak
+menyimpan seed; aplikasi mencatatnya sebagai tidak diketahui, disertai checksum
+file sumber agar asal data tetap bisa diverifikasi.
+
+Paket ZIP mencakup CSV lengkap, metadata/seed/jumlah data, checksum SHA-256,
+hasil delapan kasus dan trace, serta riwayat/benchmark/log yang sudah tersedia.
+Klik **Siapkan paket bukti ZIP**, lalu **Unduh paket bukti ZIP**. Siapkan ulang
+setelah data berubah. Bukti kasus memakai input kecil terpisah; bukan pengujian
+seluruh UAS, dan tidak menggantikan screenshot nyata beserta interpretasinya.
+
 ### Demo Order Management
 
-Halaman Order Management langsung membuka **Demo presentasi**: empat order
+Halaman Order Management langsung membuka **Dataset aplikasi** dengan seluruh
+order CSV. Untuk latihan singkat, pilih **Demo presentasi**: empat order
 Andi, Budi, Citra, Dewi. Urutan awal **Citra → Dewi → Budi → Andi** dihitung
 oleh MaxHeap asli. Kartu order berikutnya menjelaskan alasan pemilihan.
 
@@ -51,7 +66,7 @@ Tab **Cara Max-Heap memilih** menjelaskan tiga aturan dan menyediakan pohon/arra
 di expander. Tab **Panduan pemateri** berisi contoh narasi Febri Anggoro dan
 keterkaitan Hash Table Rigan. Status diproses belum berarti selesai diantar.
 
-Pilih **Dataset aplikasi** untuk memakai data bersama dengan halaman Search
+Mode **Dataset aplikasi** memakai data bersama dengan halaman Search
 dan Delivery Route. Order dari mode demo terisolasi dan tidak muncul di Search.
 Mode terakhir diingat saat berpindah halaman. Memulai ulang demo tidak mengubah
 dataset bersama atau order operasional.
@@ -74,9 +89,27 @@ dispatcher. Aging masih TODO. Detail koreksi slide dan batas klaim:
 
 Menghasilkan `data/orders.csv`, `data/restaurants.csv`, `data/menus.csv`.
 Gunakan jumlah positif; CSV dengan nama sama ditimpa. Angka ini skala desain UTS,
-bukan pengukuran industri. UI saat ini membangkitkan dataset dalam session melalui
-Beranda; **belum membaca CSV tersebut**. Halaman Delivery Route dapat memakai
-koordinat order/restoran dari dataset session yang sama atau peta sintetis.
+bukan pengukuran industri. **Aplikasi langsung membaca seluruh baris** dari
+`data/orders.csv`, `data/restaurants.csv`, dan `data/menus.csv`, tanpa sampling
+atau pengganti acak. CSV lokal saat perubahan ini berisi 100.000 order, 10.000
+restoran, dan 50.000 menu. Jumlah aktual selalu mengikuti isi file.
+
+Beranda menyediakan **Muat ulang seluruh CSV**. CSV yang berubah dideteksi
+melalui signature file dan dimuat ulang otomatis. Aksi tambah/proses/batal/rating
+berlaku dalam session; file asli tidak ditimpa. Memuat ulang mengembalikan isi CSV
+serta mengosongkan log aksi operasional. CSV yang tidak lengkap/invalid menghasilkan
+pesan error, tidak diganti dataset sintetis secara diam-diam.
+
+Evidence menampilkan seluruh tabel dan menyediakan CSV lengkap. Search dengan
+prefix kosong menampilkan seluruh restoran/menu; prefix terisi menampilkan semua
+kecocokan. Pilihan restoran, ranking default, dan tabel antrean juga tidak dipotong.
+Tabel dapat digulir; semua baris tetap tersedia. Batas **15 customer per rute**
+Held-Karp dan batas brute force tetap merupakan batas algoritma, bukan batas
+pemuatan dataset. Jika restoran punya <=15 order aktif, semua dipilih otomatis;
+untuk restoran yang lebih besar, pilih batch secara eksplisit.
+
+Halaman Delivery Route memakai koordinat order/restoran dari CSV yang sama atau
+peta sintetis yang dipilih khusus untuk eksperimen.
 Metadata berat/deadline/zona/kapasitas untuk modul baru masih perlu ditambahkan
 melalui adapter bersama, bukan dataset terpisah per halaman.
 
@@ -112,7 +145,7 @@ src/ds/                 Min/MaxHeap, Hash, Trie, AVL dan kontrak probing/RB/B-Tr
 src/algorithms/         DP rute, oracle brute force, kontrak DP lanjut/Greedy/MST/path/flow
 src/services/           Wiring UI, benchmark, audit UAS dan kontrak PQ aging
 src/uas.py              Satu peta sesi, bobot, pemilik, target, klaim dan eksperimen
-src/data/               Generator sintetis dengan seed
+src/data/               Loader CSV seluruh baris + generator sintetis dengan seed
 tests/                  Tes awal UTS + tes pendukung UAS; tes modul baru dikerjakan pemilik
 experiments/            Runner, petunjuk, output CSV dan metadata JSON
 docs/UAS_PLAN.md        Gap UTS→UAS, kontribusi, integrasi dan alur presentasi
@@ -131,7 +164,7 @@ Materi/                 PDF acuan asli tim
 ```
 
 Suite awal: 5 lulus, 35 gagal karena TODO. Setelah fondasi dan alur individu
-dilengkapi dan halaman order didesain ulang: **62 tes lulus**, termasuk UI tambah/cari/batal order dan pilihan
+dilengkapi, halaman order didesain ulang dan CSV digunakan penuh: **69 tes lulus**, termasuk UI tambah/cari/batal order dan pilihan
 sembilan anggota. Tes tersebut belum mencakup algoritma perluasan yang masih
 berupa kontrak. Jangan mengubah tes menjadi skip untuk menyembunyikan algoritma
 yang belum jadi. Marker `opsional` berasal dari

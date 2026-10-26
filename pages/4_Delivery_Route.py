@@ -28,8 +28,10 @@ if mode == "Order dari dataset bersama":
     restaurant = st.selectbox("Restoran asal", available,
         format_func=lambda r: f"{r.name} ({r.restaurant_id}) — {len(grouped[r.restaurant_id])} order")
     options = grouped[restaurant.restaurant_id]
+    st.caption(f"Seluruh {len(options)} order aktif restoran ini tersedia. Held-Karp dibatasi 15 customer "
+               "per perhitungan karena kompleksitas eksponensial; batas ini tidak mengurangi CSV yang dimuat.")
     selected = st.multiselect("Order dalam batch (maksimal 15)", options,
-        default=options[:min(6, len(options))], format_func=lambda o: o.order_id,
+        default=options if len(options) <= 15 else [], format_func=lambda o: o.order_id,
         max_selections=15)
     if not selected:
         st.info("Pilih minimal satu order untuk dihitung rutenya.")

@@ -28,7 +28,8 @@ c3.metric("Batas teoritis 1,44·log₂(n)", f"{1.44 * math.log2(max(n, 2)):.1f}"
 
 left, right = st.columns(2)
 with left:
-    k = st.slider("Top-k", 1, 50, 10)
+    show_all = st.checkbox("Tampilkan seluruh ranking", value=True)
+    k = n if show_all else int(st.number_input("Top-k", min_value=1, max_value=max(n, 1), value=min(10, max(n, 1))))
     ok, top = try_call("AVL Tree", ranking.top, k)
     if ok:
         st.dataframe(pd.DataFrame([{"nama": r.name, "rating": r.rating, "id": r.restaurant_id}
@@ -38,9 +39,11 @@ with right:
     ok, res = try_call("AVL Tree", ranking.above, min_rating)
     if ok:
         st.write(f"{len(res)} restoran dengan rating ≥ {min_rating}")
+        st.dataframe(pd.DataFrame([{"id": r.restaurant_id, "nama": r.name, "rating": r.rating}
+                                  for r in res]), hide_index=True, width="stretch")
 
 st.subheader("Perbarui rating")
-rest = st.selectbox("Restoran", data["restaurants"][:200],
+rest = st.selectbox("Restoran", data["restaurants"],
                     format_func=lambda r: f"{r.name} ({r.rating})")
 new_rating = st.number_input("Rating baru", 1.0, 5.0, 4.5, 0.1)
 if st.button("Simpan rating"):
@@ -48,5 +51,5 @@ if st.button("Simpan rating"):
     if ok:
         st.success("Rating diperbarui (delete lalu reinsert).")
 
-st.subheader("Log rotasi terakhir")
-st.code("\n".join(tree.rotation_log[-20:]) or "Belum ada rotasi tercatat.")
+with st.expander(f"Seluruh log rotasi ({len(tree.rotation_log)})"):
+    st.code("\n".join(tree.rotation_log) or "Belum ada rotasi tercatat.")

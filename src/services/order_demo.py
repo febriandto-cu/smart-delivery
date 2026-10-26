@@ -16,7 +16,7 @@ def create_demo() -> tuple[OrderService, list[Order]]:
     return service, orders
 
 
-def queue_preview(service: OrderService, limit: int = 12) -> list[Order]:
+def queue_preview(service: OrderService, limit: int | None = 12) -> list[Order]:
     """Simulasikan extract pada salinan heap, tanpa mengambil antrean asli.
 
     Bukan urutan array heap. Order batal/yang sudah diproses dilewati.
@@ -25,7 +25,7 @@ def queue_preview(service: OrderService, limit: int = 12) -> list[Order]:
     snapshot = MaxHeap()
     snapshot.build_heap(service.queue.heap._data)
     result = []
-    while len(snapshot) and len(result) < limit:
+    while len(snapshot) and (limit is None or len(result) < limit):
         key = snapshot.extract_max()
         order = service.get_order(key[-1])
         if order is not None and order.status == OrderStatus.PENDING:

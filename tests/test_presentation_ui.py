@@ -1,12 +1,14 @@
 """Alur individu dan operasi yang dahulu terblokir TODO di antarmuka."""
 import json
 from pathlib import Path
+import pytest
 
 from streamlit.testing.v1 import AppTest
 
 from src.presentation import GUIDES
 
 ENTRYPOINT = Path(__file__).resolve().parents[1] / "app.py"
+pytestmark = pytest.mark.usefixtures("csv_dataset")
 
 
 def test_member_card_opens_correct_guide_and_heap_demo_can_extract_and_reset():
@@ -57,6 +59,7 @@ def test_guided_order_demo_explains_fifo_cancel_reset_and_preserves_shared_datas
     app = AppTest.from_file(ENTRYPOINT).run(timeout=30)
     count = len(app.session_state.data["orders"])
     app.switch_page("pages/1_Order_Management.py").run(timeout=30)
+    app.radio(key="order_mode").set_value("Demo presentasi").run()
     assert app.radio(key="order_mode").value == "Demo presentasi"
     assert app.session_state.guided_demo_service.next_order().order_id == "DEMO-03"
     assert any("FIFO" in message.value for message in app.info)
@@ -78,6 +81,7 @@ def test_guided_order_demo_explains_fifo_cancel_reset_and_preserves_shared_datas
 def test_guided_order_demo_new_urgent_overtakes_high_and_empty_queue_recovers():
     app = AppTest.from_file(ENTRYPOINT).run(timeout=30)
     app.switch_page("pages/1_Order_Management.py").run(timeout=30)
+    app.radio(key="order_mode").set_value("Demo presentasi").run()
     next(t for t in app.text_input if t.label == "Nama customer").set_value("Eko")
     from src.models import Priority
     next(r for r in app.radio if r.label == "Prioritas").set_value(Priority.URGENT)

@@ -13,7 +13,7 @@ st.set_page_config(page_title="Demo Antrean Order", layout="wide")
 st.title("Demo Antrean Order")
 st.write("Lihat siapa yang dilayani lebih dulu, pahami alasannya, lalu proses order satu per satu.")
 
-modes = ["Demo presentasi", "Dataset aplikasi"]
+modes = ["Dataset aplikasi", "Demo presentasi"]
 mode = st.radio("Pilih mode", modes,
     index=modes.index(st.session_state.get("order_mode_choice", modes[0])), horizontal=True, key="order_mode")
 st.session_state.order_mode_choice = mode
@@ -72,7 +72,7 @@ a.metric("Menunggu", len(pending))
 b.metric("Sedang diproses", len(processing))
 c.metric("Dibatalkan", len(cancelled))
 
-preview = queue_preview(service, limit=12)
+preview = queue_preview(service, limit=None)
 main, actions = st.columns([1.6, 1], gap="large")
 with main:
     with st.container(border=True):
@@ -112,7 +112,7 @@ with actions:
         with st.form(f"add_order_{prefix}", clear_on_submit=True):
             customer = st.text_input("Nama customer", placeholder="Contoh: Eko", max_chars=80)
             if not is_demo:
-                restaurant = st.selectbox("Restoran", data["restaurants"][:200],
+                restaurant = st.selectbox("Restoran", data["restaurants"],
                     format_func=lambda r: f"{r.name} ({r.restaurant_id})")
             level = st.radio("Prioritas", list(Priority), format_func=lambda p: p.name.title(),
                 horizontal=True, index=2)
@@ -174,8 +174,13 @@ with explanation_tab:
         service.next_order()  # Buang entry batal di root sesuai lazy deletion service.
         keys = service.queue.heap._data
         if keys:
-            st.graphviz_chart(heap_diagram(keys[:15]))
-            st.caption("Pohon menampilkan maksimal 15 node. Array heap hanya menjamin parent >= anak, "
+            st.dataframe(pd.DataFrame([{"indeks": i, "order_id": key[-1], "skor": key[0],
+                "menit masuk": -key[1], "sequence": -key[2]} for i, key in enumerate(keys)]),
+                hide_index=True, width="stretch")
+            if st.checkbox("Gambar pohon seluruh node"):
+                st.graphviz_chart(heap_diagram(keys))
+            st.caption("Seluruh node tersedia pada tabel array. Gambar pohon mengikuti jumlah node. "
+                       "Array heap hanya menjamin parent >= anak, "
                        "sedangkan tabel antrean di atas menunjukkan urutan pengambilan.")
             if cancelled:
                 st.caption("Entry batal dapat masih ada di pohon; service akan melewatinya saat diambil.")

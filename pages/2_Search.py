@@ -35,9 +35,10 @@ with tab_rest:
     if errors["search"]:
         not_ready("Trie", errors["search"])
     else:
-        prefix = st.text_input("Ketik nama restoran", "ba")
-        ok, res = try_call("Trie", services["search"].suggest_restaurants, prefix, 10)
+        prefix = st.text_input("Ketik nama restoran", "", placeholder="Kosongkan untuk menampilkan semua restoran")
+        ok, res = try_call("Trie", services["search"].suggest_restaurants, prefix, None)
         if ok:
+            st.caption(f"{len(res):,} restoran cocok. Tidak ada batas jumlah hasil.")
             st.dataframe(pd.DataFrame([{"id": r.restaurant_id, "nama": r.name, "rating": r.rating}
                                        for r in res]), hide_index=True, width="stretch")
 
@@ -45,9 +46,10 @@ with tab_menu:
     if errors["search"]:
         not_ready("Trie", errors["search"])
     else:
-        prefix = st.text_input("Ketik nama menu", "ayam")
-        ok, res = try_call("Trie", services["search"].suggest_menus, prefix, 10)
+        prefix = st.text_input("Ketik nama menu", "", placeholder="Kosongkan untuk menampilkan semua menu")
+        ok, res = try_call("Trie", services["search"].suggest_menus, prefix, None)
         if ok:
+            st.caption(f"{len(res):,} menu cocok. Tidak ada batas jumlah hasil.")
             st.dataframe(pd.DataFrame([{"id": m.menu_id, "menu": m.name, "harga": m.price,
                                         "restoran": m.restaurant_id} for m in res]),
                          hide_index=True, width="stretch")

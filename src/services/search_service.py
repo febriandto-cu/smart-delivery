@@ -25,14 +25,14 @@ class SearchService:
             self._menus[m.menu_id] = m
             self.menu_trie.insert(m.name, m.menu_id)
 
-    def suggest_restaurants(self, prefix: str, limit: int = 10) -> list[Restaurant]:
+    def suggest_restaurants(self, prefix: str, limit: int | None = 10) -> list[Restaurant]:
         out = []
-        for _, ids in self.restaurant_trie.starts_with(prefix, limit):
+        for _, ids in self.restaurant_trie.starts_with(prefix, len(self._restaurants) if limit is None else limit):
             out.extend(self._restaurants[i] for i in ids)
-        return out[:limit]
+        return out if limit is None else out[:limit]
 
-    def suggest_menus(self, prefix: str, limit: int = 10) -> list[MenuItem]:
+    def suggest_menus(self, prefix: str, limit: int | None = 10) -> list[MenuItem]:
         out = []
-        for _, ids in self.menu_trie.starts_with(prefix, limit):
+        for _, ids in self.menu_trie.starts_with(prefix, len(self._menus) if limit is None else limit):
             out.extend(self._menus[i] for i in ids)
-        return out[:limit]
+        return out if limit is None else out[:limit]
