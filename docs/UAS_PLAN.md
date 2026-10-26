@@ -31,7 +31,7 @@ menambahkan kontrak kerja, dashboard dan pendukung; **belum menyelesaikan 12 ses
 Smoke test lama yang bertuliskan “Siap” tidak berarti memenuhi rubrik satu sesi.
 
 Pembaruan setelah evaluasi tampilan: fondasi UTS telah diimplementasikan dan
-59 tes lulus. Beranda memakai kartu sembilan nama; menu Bagian Individu memuat
+62 tes lulus setelah perbaikan demo order. Beranda memakai kartu sembilan nama; menu Bagian Individu memuat
 tugas, urutan presentasi, demo interaktif, file serta bukti. Halaman order,
 Search, Ranking, dan Delivery Route sudah memakai implementasi asli. Perluasan
 UAS tetap belum selesai; lihat kontrak/file dan target tiap sesi untuk sisanya.

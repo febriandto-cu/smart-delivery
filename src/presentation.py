@@ -36,7 +36,7 @@ GUIDES = (
         ("Petakan requirement UTS ke fitur yang sudah dapat dijalankan.",
          "Jelaskan empat lapisan dan tanggung jawab tiap service.",
          "Telusuri satu order: penyimpanan ID, antrean prioritas, status, lalu input rute."),
-        ("Tampilkan diagram empat lapisan di bawah.", "Buka Order Management dan tambah satu order.",
+        ("Tampilkan diagram empat lapisan di bawah.", "Buka Order Management, pilih Dataset aplikasi, lalu tambah satu order.",
          "Cari ID tersebut pada Search, lalu jelaskan bahwa pemilihan batch rute belum otomatis dispatch."),
         ("Diagram arsitektur", "Tabel requirement dan fitur", "Screenshot alur data lintas halaman"),
         "pages/1_Order_Management.py"),

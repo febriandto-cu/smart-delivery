@@ -36,6 +36,26 @@ lima pemateri teknis mendapat modul masing-masing, Daffa tes/eksperimen.
 Menu **UAS Workspace** tetap menyimpan cakupan 12 sesi, target level dan audit
 bukti. Status file/smoke test tidak berarti seluruh rubrik UAS terpenuhi.
 
+### Demo Order Management
+
+Halaman Order Management langsung membuka **Demo presentasi**: empat order
+Andi, Budi, Citra, Dewi. Urutan awal **Citra → Dewi → Budi → Andi** dihitung
+oleh MaxHeap asli. Kartu order berikutnya menjelaskan alasan pemilihan.
+
+1. Klik **Proses order berikutnya** dan amati perpindahan urutan.
+2. Tambahkan order baru atau pilih order pada **Batalkan order yang menunggu**.
+3. Buka **Riwayat aksi** untuk membaca perubahan atau mengunduh CSV.
+4. Klik **Mulai ulang demo** untuk kembali ke empat order awal.
+
+Tab **Cara Max-Heap memilih** menjelaskan tiga aturan dan menyediakan pohon/array
+di expander. Tab **Panduan pemateri** berisi contoh narasi Febri Anggoro dan
+keterkaitan Hash Table Rigan. Status diproses belum berarti selesai diantar.
+
+Pilih **Dataset aplikasi** untuk memakai data bersama dengan halaman Search
+dan Delivery Route. Order dari mode demo terisolasi dan tidak muncul di Search.
+Mode terakhir diingat saat berpindah halaman. Memulai ulang demo tidak mengubah
+dataset bersama atau order operasional.
+
 ## Pilihan heap tim
 
 Dispatcher menggunakan **Max-Heap**, sesuai preferensi tim dan mapping slide 7
@@ -111,7 +131,7 @@ Materi/                 PDF acuan asli tim
 ```
 
 Suite awal: 5 lulus, 35 gagal karena TODO. Setelah fondasi dan alur individu
-dilengkapi: **59 tes lulus**, termasuk UI tambah/cari/batal order dan pilihan
+dilengkapi dan halaman order didesain ulang: **62 tes lulus**, termasuk UI tambah/cari/batal order dan pilihan
 sembilan anggota. Tes tersebut belum mencakup algoritma perluasan yang masih
 berupa kontrak. Jangan mengubah tes menjadi skip untuk menyembunyikan algoritma
 yang belum jadi. Marker `opsional` berasal dari

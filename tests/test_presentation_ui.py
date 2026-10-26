@@ -36,6 +36,7 @@ def test_every_confirmed_member_has_a_guide_and_rendered_demo():
 def test_add_order_is_shared_with_search_and_cancellation_changes_same_object():
     app = AppTest.from_file(ENTRYPOINT).run(timeout=30)
     app.switch_page("pages/1_Order_Management.py").run(timeout=30)
+    app.radio(key="order_mode").set_value("Dataset aplikasi").run()
     next(t for t in app.text_input if t.label == "Nama customer").set_value("Demo Integrasi")
     next(b for b in app.button if b.label == "Tambah order").click().run()
     assert not app.exception
@@ -46,7 +47,47 @@ def test_add_order_is_shared_with_search_and_cancellation_changes_same_object():
     details = json.loads(app.json[0].value)
     assert details["customer"] == "Demo Integrasi"
     app.switch_page("pages/1_Order_Management.py").run(timeout=30)
-    next(t for t in app.text_input if t.label == "order_id yang dibatalkan").set_value(added.order_id)
-    next(b for b in app.button if b.label == "Batalkan").click().run()
+    app.selectbox(key="cancel_id_operational").set_value(added.order_id).run()
+    app.button(key="cancel_selected").click().run()
     assert not app.exception
     assert app.session_state.services["order"].get_order(added.order_id).status.value == "cancelled"
+
+
+def test_guided_order_demo_explains_fifo_cancel_reset_and_preserves_shared_dataset():
+    app = AppTest.from_file(ENTRYPOINT).run(timeout=30)
+    count = len(app.session_state.data["orders"])
+    app.switch_page("pages/1_Order_Management.py").run(timeout=30)
+    assert app.radio(key="order_mode").value == "Demo presentasi"
+    assert app.session_state.guided_demo_service.next_order().order_id == "DEMO-03"
+    assert any("FIFO" in message.value for message in app.info)
+    app.button(key="dispatch_next").click().run()
+    assert app.session_state.guided_demo_service.next_order().order_id == "DEMO-04"
+    app.selectbox(key="cancel_id_guided_demo").set_value("DEMO-04").run()
+    app.button(key="cancel_selected").click().run()
+    assert app.session_state.guided_demo_service.next_order().order_id == "DEMO-02"
+    assert len(app.session_state.guided_demo_events) == 2
+    assert any("dibatalkan" in notice.value for notice in app.success)
+    assert len(app.session_state.data["orders"]) == count
+    next(b for b in app.button if b.label == "Mulai ulang demo").click().run()
+    assert app.session_state.guided_demo_service.next_order().order_id == "DEMO-03"
+    assert app.session_state.guided_demo_events == []
+    assert len(app.session_state.guided_demo_orders) == 4
+    assert not app.exception
+
+
+def test_guided_order_demo_new_urgent_overtakes_high_and_empty_queue_recovers():
+    app = AppTest.from_file(ENTRYPOINT).run(timeout=30)
+    app.switch_page("pages/1_Order_Management.py").run(timeout=30)
+    next(t for t in app.text_input if t.label == "Nama customer").set_value("Eko")
+    from src.models import Priority
+    next(r for r in app.radio if r.label == "Prioritas").set_value(Priority.URGENT)
+    next(b for b in app.button if b.label == "Tambah order").click().run()
+    for oid in ["DEMO-03", "DEMO-04", "DEMO-05", "DEMO-02", "DEMO-01"]:
+        assert app.session_state.guided_demo_service.next_order().order_id == oid
+        app.button(key="dispatch_next").click().run()
+    assert not app.exception
+    assert app.session_state.guided_demo_service.next_order() is None
+    assert any("Antrean sudah kosong" in text.value for text in app.success)
+    next(t for t in app.text_input if t.label == "Nama customer").set_value("Fitri")
+    next(b for b in app.button if b.label == "Tambah order").click().run()
+    assert app.session_state.guided_demo_service.next_order().customer_name == "Fitri"
