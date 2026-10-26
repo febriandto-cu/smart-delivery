@@ -10,7 +10,7 @@ from enum import Enum, IntEnum
 
 
 class Priority(IntEnum):
-    """Angka lebih kecil = lebih urgent (sesuai Min-Heap)."""
+    """Level data lama: angka kecil lebih urgent; skor Max-Heap = 4-level."""
 
     URGENT = 1
     HIGH = 2
@@ -36,8 +36,12 @@ class Order:
     status: OrderStatus = OrderStatus.PENDING
 
     def heap_key(self) -> tuple[int, float, str]:
-        """Kunci komposit Priority Queue (Design Freeze)."""
+        """Kunci MinHeap lama, dipertahankan untuk kompatibilitas/oracle."""
         return (int(self.priority_level), self.created_at, self.order_id)
+
+    def max_heap_key(self) -> tuple[int, float, str]:
+        """Skor Urgent=3, High=2, Normal=1; waktu lebih awal menang."""
+        return (4 - int(self.priority_level), -self.created_at, self.order_id)
 
 
 @dataclass

@@ -6,22 +6,29 @@ import pandas as pd
 import streamlit as st
 
 from src.status import module_status
+from src.services.uas_service import session_checklist
 from src.ui import DEFAULT_SIZES, build_services, get_services
+from src.presentation_ui import member_cards
 
 st.set_page_config(page_title="Smart Delivery & Order Optimization", layout="wide")
 
 st.title("Smart Delivery & Order Optimization")
 st.caption("Group 1 · Data Structure and Algorithm · 2026/2027")
 
-statuses = module_status()
-ready = sum(s["Status"] == "Siap" for s in statuses)
-st.subheader(f"{ready} dari {len(statuses)} modul siap")
-st.progress(ready / len(statuses))
-st.dataframe(pd.DataFrame(statuses), hide_index=True, width="stretch")
-st.caption("Status diperiksa dengan uji kecil setiap kali halaman dimuat. "
-           "Uji lengkap: jalankan `pytest` dari terminal.")
+st.subheader("Mulai dari bagianmu")
+st.write("Pilih nama anggota. Setiap bagian berisi tugas, urutan presentasi, demo yang bisa dicoba, "
+         "file terkait, dan bukti yang perlu disiapkan.")
+member_cards()
+st.info("Peran mengikuti pembagian UTS kalian. Tambahan sesi UAS tetap dicatat di UAS Workspace; "
+        "pemilik tambahan belum ditentukan. Demo fondasi yang berjalan belum berarti seluruh UAS selesai.")
+with st.expander("Status teknis dan cakupan 12 sesi UAS"):
+    st.dataframe(pd.DataFrame(session_checklist())[["Sesi", "Topik", "Pemilik", "Kode", "TODO"]],
+                 hide_index=True, width="stretch")
+    st.write("Uji singkat lima modul fondasi UTS")
+    st.dataframe(pd.DataFrame(module_status()), hide_index=True, width="stretch")
+    st.caption("Status Siap di tabel ini hanya berarti uji kecil lulus; bukan seluruh syarat UAS terpenuhi.")
 
-st.subheader("Data yang dimuat")
+st.subheader("Dataset bersama untuk demo aplikasi")
 services, errors, data = get_services()
 c1, c2, c3 = st.columns(3)
 c1.metric("Order", f"{len(data['orders']):,}".replace(",", "."))

@@ -7,9 +7,11 @@ from __future__ import annotations
 from bisect import insort
 from typing import Any, Optional
 
+from src.ds.trie import normalize
+
 
 class SortedListPQ:
-    """Baseline E1: list terurut. insert O(n) (geser elemen), extract O(n) (pop(0))."""
+    """List terurut: insert O(n), extract_min O(n), extract_max O(1)."""
 
     def __init__(self) -> None:
         self._data: list = []
@@ -22,6 +24,9 @@ class SortedListPQ:
 
     def extract_min(self):
         return self._data.pop(0) if self._data else None
+
+    def extract_max(self):
+        return self._data.pop() if self._data else None
 
 
 def linear_search(orders: list, order_id: str):
@@ -37,6 +42,24 @@ def linear_prefix_search(words: list[str], prefix: str, limit: int = 10) -> list
     prefix = prefix.lower()
     out = [w for w in words if w.lower().startswith(prefix)]
     return sorted(out)[:limit]
+
+
+def linear_prefix_groups(words: list[str], prefix: str, limit: int = 10) -> list[tuple[str, list[str]]]:
+    """Oracle/baseline E3 dengan semantik sama seperti Trie.starts_with.
+
+    Nama unik ternormalisasi, ID dari indeks input, limit jumlah kata (bukan
+    jumlah ID). Seluruh scan/group dilakukan saat query, tanpa indeks awal.
+    dict/sorted diperbolehkan pada baseline, bukan pengganti inti yang dinilai.
+    """
+    if limit <= 0:
+        return []
+    prefix = normalize(prefix)
+    groups: dict[str, list[str]] = {}
+    for i, word in enumerate(words):
+        word = normalize(word)
+        if word.startswith(prefix):
+            groups.setdefault(word, []).append(str(i))
+    return [(word, groups[word]) for word in sorted(groups)[:limit]]
 
 
 class _Node:

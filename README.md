@@ -1,87 +1,147 @@
 # Smart Delivery & Order Optimization System
 
-Group 1, Data Structure and Algorithm, Semester 5 (2026/2027).
-Implementasi UAS dari proposal UTS: Min-Heap Priority Queue, Hash Table (Separate Chaining),
-Trie, AVL Tree, dan Dynamic Programming Held-Karp, dengan antarmuka Streamlit.
+Kelompok 1 — Data Structure and Algorithm, Semester 5, 2026/2027.
+Fondasi kerja tim UAS berdasarkan [Guideline UAS](Materi/Guideline_UAS_Data_Structure_and_Algorithm.pdf)
+dan [naskah UTS](<Materi/Naskah Presentasi Final — Kelompok 1.pdf>).
 
-## Menjalankan
+**Mulai dari [rencana dan pembagian UAS](docs/UAS_PLAN.md).** Cakupan UAS adalah
+12 sesi (1–7, 9–13). Fondasi UTS sudah berjalan: Min/MaxHeap, dispatcher dasar,
+Hash Table chaining, Trie, AVL, dan Held-Karp tabulation. Perluasan UAS seperti
+aging, probing, RB/B-Tree, memoization, DP lanjut dan algoritma graf masih
+memerlukan implementasi. Proyek ini belum menyelesaikan semua sesi UAS.
 
-```bash
+## Menjalankan di Windows PowerShell
+
+Python 3.10+ diperlukan. Dari root proyek:
+
+```powershell
 python -m venv .venv
-source .venv/bin/activate        # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-
-streamlit run app.py             # aplikasi
-pytest                           # semua test
-pytest tests/test_heap.py        # test satu modul saja
-pytest -m "not opsional"         # hanya test fitur wajib
-python -m src.data.generator --orders 100000 --restaurants 10000 --menus 50000   # dataset CSV ke data/
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe -m streamlit run app.py
 ```
 
-Halaman Beranda menampilkan status setiap modul (Siap / Belum diimplementasi / Error).
-Halaman yang modulnya belum selesai tetap terbuka dan menampilkan pesan, bukan crash.
+Buka `http://localhost:8501`. Perintah langsung ke virtual environment tidak
+memerlukan aktivasi PowerShell. Di macOS/Linux gunakan `.venv/bin/python`.
 
-## Struktur
+Beranda menampilkan **kartu sembilan anggota**. Klik **Buka bagian saya** atau
+buka menu **Bagian Individu**, lalu pilih nama. Tersedia tiga tab:
 
+- **Tugas & alur presentasi:** materi yang disiapkan dan urutan demonstrasi.
+- **Demo bagian saya:** output kode asli, termasuk simulasi MaxHeap mandiri,
+  bucket Hash, pencarian Trie, empat rotasi AVL, DP vs brute force, dan tes.
+- **File & bukti:** file terkait dan artefak presentasi yang perlu dikumpulkan.
+
+Atika mendapat ringkasan pembukaan/penutup, Husnu arsitektur, Eka pemetaan fitur,
+lima pemateri teknis mendapat modul masing-masing, Daffa tes/eksperimen.
+Menu **UAS Workspace** tetap menyimpan cakupan 12 sesi, target level dan audit
+bukti. Status file/smoke test tidak berarti seluruh rubrik UAS terpenuhi.
+
+## Pilihan heap tim
+
+Dispatcher menggunakan **Max-Heap**, sesuai preferensi tim dan mapping slide 7
+PPT UTS. Skor: **Urgent=3, High=2, Normal=1**. Waktu lebih awal menang; sequence
+menjaga FIFO ketika timestamp sama. Enum data lama tetap Urgent=1, High=2,
+Normal=3; `Order.max_heap_key()` memetakan level ke skor (`4-level`).
+MinHeap tetap menjadi pelengkap wajib S1 dan dapat dipakai Prim; bukan heap
+dispatcher. Aging masih TODO. Detail koreksi slide dan batas klaim:
+[keputusan Max-Heap](docs/MAX_HEAP_DECISION.md).
+
+## Dataset
+
+```powershell
+.\.venv\Scripts\python.exe -m src.data.generator --orders 100000 --restaurants 10000 --menus 150000 --seed 42
 ```
-app.py                      Beranda + status modul
-pages/                      5 halaman Streamlit (Order, Search, Ranking, Delivery Route, Performance Lab)
-src/models.py               Entitas Order, Restaurant, MenuItem, Courier (Proposal 7.2)
-src/ds/                     heap.py, hash_table.py, trie.py, avl.py      <- TODO tim
-src/algorithms/             dp_route.py (TODO tim), brute_force.py (sudah jadi)
-src/services/               Service layer penghubung UI dan struktur data (sudah jadi)
-src/baselines.py            Pendekatan naif untuk eksperimen (sudah jadi)
-src/data/generator.py       Dataset sintetis dengan seed tetap (sudah jadi)
-src/utils/timer.py          Alat ukur waktu dan memori (sudah jadi)
-tests/                      TC-01 s.d. TC-18 sesuai Proposal Bagian 11
+
+Menghasilkan `data/orders.csv`, `data/restaurants.csv`, `data/menus.csv`.
+Gunakan jumlah positif; CSV dengan nama sama ditimpa. Angka ini skala desain UTS,
+bukan pengukuran industri. UI saat ini membangkitkan dataset dalam session melalui
+Beranda; **belum membaca CSV tersebut**. Halaman Delivery Route dapat memakai
+koordinat order/restoran dari dataset session yang sama atau peta sintetis.
+Metadata berat/deadline/zona/kapasitas untuk modul baru masih perlu ditambahkan
+melalui adapter bersama, bukan dataset terpisah per halaman.
+
+## Pembagian implementasi dan presentasi
+
+| Anggota | Bagian presentasi sesuai tabel UTS |
+| --- | --- |
+| Atika | Pembukaan, tim, background, problem statement; timeline, kesimpulan, referensi |
+| Husnu | Objectives, functional requirements, arsitektur |
+| Eka | Pemetaan fitur ke struktur data |
+| Febri Anggoro | Heap & Priority Queue |
+| Rigan | Hash Table |
+| Rendi | Trie |
+| Febri Andri | AVL Tree |
+| M Febri | Dynamic Programming |
+| Daffa | Complexity, testing, eksperimen |
+
+Peran presentasi mengikuti tabel yang dikonfirmasi pengguna; durasi UTS total
+28 menit. Pemilik implementasi tambahan S6, S9–S13 dan reviewer belum ditentukan.
+Kebutuhan UAS tetap tercatat, dengan alokasi terpisah dari peran presentasi.
+Detail slide dan durasi: `src/uas.py`, UAS Workspace, dan
+[rencana UAS](docs/UAS_PLAN.md).
+
+## Struktur proyek
+
+```text
+app.py                  Kartu sembilan anggota, dataset dan status teknis
+pages/                  5 fitur aplikasi + UAS Workspace + Bagian Individu
+src/presentation.py     Tugas, alur demo, file dan bukti per pemateri
+src/presentation_ui.py  Panduan per anggota dan demo interaktif mandiri
+src/models.py           Order, Restaurant, MenuItem, Courier
+src/ds/                 Min/MaxHeap, Hash, Trie, AVL dan kontrak probing/RB/B-Tree/UnionFind
+src/algorithms/         DP rute, oracle brute force, kontrak DP lanjut/Greedy/MST/path/flow
+src/services/           Wiring UI, benchmark, audit UAS dan kontrak PQ aging
+src/uas.py              Satu peta sesi, bobot, pemilik, target, klaim dan eksperimen
+src/data/               Generator sintetis dengan seed
+tests/                  Tes awal UTS + tes pendukung UAS; tes modul baru dikerjakan pemilik
+experiments/            Runner, petunjuk, output CSV dan metadata JSON
+docs/UAS_PLAN.md        Gap UTS→UAS, kontribusi, integrasi dan alur presentasi
+docs/REPORT_TEMPLATE.md Kerangka IMRAD, matriks klaim-bukti, kontribusi dan bantuan AI
+docs/evidence/          Paket gambar/tabel/grafik/slide tiap sesi
+Materi/                 PDF acuan asli tim
 ```
 
-## Pembagian file
+## Pengujian dan eksperimen
 
-| Peran | File yang dikerjakan | Test yang harus lulus | Halaman |
-| --- | --- | --- | --- |
-| Heap & PQ Engineer | `src/ds/heap.py` | `tests/test_heap.py` | Order Management |
-| Hash Table Engineer | `src/ds/hash_table.py` | `tests/test_hash_table.py` | Search (tab Order) |
-| Trie Engineer | `src/ds/trie.py` | `tests/test_trie.py` | Search (tab Restoran, Menu) |
-| AVL Tree Engineer | `src/ds/avl.py` | `tests/test_avl.py` | Ranking |
-| DP Engineer | `src/algorithms/dp_route.py` | `tests/test_dp.py` | Delivery Route |
-| QA & Performance Lead | `tests/`, `src/services/benchmark_service.py`, `src/baselines.py` | `tests/test_integration.py` | Performance Lab |
-| System Architect | `src/ui.py`, `src/services/`, `app.py`, tampilan halaman | semua halaman tanpa error | semua |
-| Business Analyst | validasi fitur vs Functional Requirements, teks UI, user flow | - | Order Management |
-| Ketua | review PR, integrasi, laporan UAS | `pytest` hijau di `main` | Beranda |
+```powershell
+.\.venv\Scripts\python.exe -m pytest -q
+.\.venv\Scripts\python.exe -m pytest tests/test_uas_support.py -q
+.\.venv\Scripts\python.exe -m pytest tests/test_heap.py -q
+.\.venv\Scripts\python.exe -m experiments.run --exp E1 --sizes 1000 10000 --repeats 5
+```
 
-Setiap fungsi yang harus dikerjakan berisi `raise NotImplementedError("TODO(...)")` beserta
-docstring yang menjelaskan tugasnya dan target kompleksitasnya.
+Suite awal: 5 lulus, 35 gagal karena TODO. Setelah fondasi dan alur individu
+dilengkapi: **59 tes lulus**, termasuk UI tambah/cari/batal order dan pilihan
+sembilan anggota. Tes tersebut belum mencakup algoritma perluasan yang masih
+berupa kontrak. Jangan mengubah tes menjadi skip untuk menyembunyikan algoritma
+yang belum jadi. Marker `opsional` berasal dari
+UTS; change-priority/aging tetap termasuk target Level 2 S2 UAS.
 
-## Aturan main
+Performance Lab/runner saat ini E1–E5. **Minimal lima pengulangan, median dan satu
+warm-up**; pengukuran memori pada run terpisah. CSV mencatat sampel mentah, seed,
+versi Python dan OS; CLI menambah metadata JSON. Tambahkan eksperimen sesi baru
+bersama Daffa. Lihat [prosedur eksperimen](experiments/README.md).
 
-1. **Jangan ubah kontrak** yang tertulis di docstring paling atas setiap file (nama method,
-   parameter, bentuk return). Service, test, dan benchmark bergantung pada kontrak itu.
-   Usulan perubahan dibahas dulu dengan ketua.
-2. **Implementasi manual.** Dilarang memakai `heapq`, `dict` sebagai penyimpanan Hash Table,
-   `hash()` bawaan, `bisect`, atau library struktur data lain di dalam `src/ds/` dan `dp_route.py`.
-3. Nama fungsi sama dengan pseudocode di Proposal Bagian 8, supaya laporan UAS mudah
-   merujuk ke proposal.
+Jangan mengutip angka speedup dari implementasi referensi sebagai hasil proyek.
+Baseline yang dilewati karena batas bukan bukti timeout. Klaim teoretis perlu
+validator, oracle dan bukti eksekusi; grafik pengukuran mendukung pertumbuhan,
+bukan pembuktian formal Big-O dengan sendirinya.
 
-## Alur kerja Git
+## Aturan kerja
 
-1. Ketua membuat repository GitHub (private) dari folder ini dan mengundang semua anggota.
-2. Setiap anggota bekerja di branch sendiri: `feat/heap`, `feat/hash-table`, `feat/trie`,
-   `feat/avl`, `feat/dp`, `feat/benchmark`, `feat/ui`.
-3. Selesai satu bagian, buka Pull Request ke `main`. Buddy me-review, ketua yang merge.
-4. Jangan push langsung ke `main`.
+1. Inti ditulis manual. Library untuk UI/visualisasi/pengukuran/oracle boleh;
+   tidak untuk menggantikan algoritma yang dinilai. Tidak memakai `heapq`,
+   `hash()`, `dict` sebagai tabel hash, `bisect`, atau algoritma siap pakai di inti.
+2. Pertahankan kontrak API lama. Tambahkan API/adapter untuk perluasan; perubahan
+   model/service bersama direview Husnu. Docstring file baru adalah kontrak kerja,
+   bukan implementasi selesai.
+3. Satu branch/PR fokus satu bagian; review silang, tidak push langsung main.
+   Setiap anggota menyimpan kontribusi faktual melalui commit, PR, tes dan bukti.
+4. Definisi selesai: correctness+validator+integrasi+eksperimen+bukti+laporan+slide
+   dan reviewer dapat menjalankan ulang. Minimal dua gambar dan satu tabel tiap
+   sesi; grafik untuk minimal delapan sesi. S13 minimal lima kasus uji.
+5. Semua anggota latihan QnA lintas modul. Nyatakan penggunaan AI/bantuan sesuai
+   panduan. Jangan mengisi hasil atau kontribusi yang belum dilakukan.
 
-**Definisi selesai** untuk sebuah modul: semua test di file test-nya lulus, statusnya
-"Siap" di Beranda, dan halamannya berfungsi.
-
-## Catatan eksperimen (bahan QnA)
-
-Baseline `SortedListPQ` memakai `bisect` yang ditulis dalam C, sedangkan Min-Heap kita
-ditulis dalam Python murni. Akibatnya pada n kecil sorted list bisa lebih cepat. Uji coba
-dengan implementasi referensi menunjukkan Min-Heap baru unggul mulai sekitar n = 50.000,
-dan pada n = 100.000 sekitar 2,6x lebih cepat. Ini contoh nyata bahwa Big-O menggambarkan
-pertumbuhan, bukan kecepatan absolut: konstanta bahasa dan implementasi ikut berpengaruh.
-Jelaskan ini di laporan UAS dan siapkan jawabannya untuk sesi tanya jawab.
-
-Baseline lain dilewati di atas batas tertentu (lihat `BASELINE_LIMIT`) karena terlalu lama.
-Fakta bahwa baseline tidak sanggup selesai juga merupakan hasil eksperimen yang layak dilaporkan.
+PDF memuat konflik tanggal/durasi/halaman/slide. Rujukan halaman dan usulan
+konservatif ada di [catatan panduan](docs/UAS_PLAN.md#ketentuan-pdf-yang-perlu-dikonfirmasi-ke-dosen).

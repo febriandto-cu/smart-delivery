@@ -10,6 +10,7 @@ from src.services.ranking_service import RankingService
 from src.services.search_service import SearchService
 
 DEFAULT_SIZES = {"orders": 1000, "restaurants": 500, "menus": 2000}
+SERVICE_VERSION = 2
 
 
 def build_services(orders: int, restaurants: int, menus: int, seed: int = 42) -> None:
@@ -30,11 +31,12 @@ def build_services(orders: int, restaurants: int, menus: int, seed: int = 42) ->
             errors[key] = None
         except NotImplementedError as e:
             errors[key] = str(e)
-    st.session_state.update(data=data, services=services, service_errors=errors)
+    st.session_state.update(data=data, services=services, service_errors=errors,
+                            service_version=SERVICE_VERSION)
 
 
 def get_services() -> tuple[dict, dict, dict]:
-    if "services" not in st.session_state:
+    if "services" not in st.session_state or st.session_state.get("service_version") != SERVICE_VERSION:
         build_services(**DEFAULT_SIZES)
     ss = st.session_state
     return ss.services, ss.service_errors, ss.data

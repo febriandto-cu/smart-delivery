@@ -4,15 +4,18 @@ from __future__ import annotations
 from src.algorithms.dp_route import held_karp
 from src.ds.avl import AVLTree
 from src.ds.hash_table import HashTable
-from src.ds.heap import MinHeap
+from src.ds.heap import OrderPriorityQueue
+from src.ds.max_heap import MaxHeap
 from src.ds.trie import Trie
 
 
 def _heap() -> None:
-    h = MinHeap()
-    for k in [(3, 1.0, "c"), (1, 5.0, "b"), (1, 2.0, "a")]:
+    h = MaxHeap()
+    for k in [(1, -1.0, "c"), (3, -5.0, "b"), (3, -2.0, "a")]:
         h.insert(k)
-    assert [h.extract_min()[2] for _ in range(3)] == ["a", "b", "c"]
+    assert h.is_heap()
+    assert [h.extract_max()[2] for _ in range(3)] == ["a", "b", "c"]
+    assert isinstance(OrderPriorityQueue().heap, MaxHeap)
 
 
 def _hash() -> None:
@@ -41,7 +44,7 @@ def _dp() -> None:
 
 
 MODULES = [
-    ("Heap & Priority Queue", "Heap & PQ Engineer", "src/ds/heap.py", _heap),
+    ("Max-Heap & Priority Queue", "Febri Anggoro", "src/ds/max_heap.py", _heap),
     ("Hash Table", "Hash Table Engineer", "src/ds/hash_table.py", _hash),
     ("Trie", "Trie Engineer", "src/ds/trie.py", _trie),
     ("AVL Tree", "AVL Tree Engineer", "src/ds/avl.py", _avl),

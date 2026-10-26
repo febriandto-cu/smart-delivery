@@ -9,6 +9,7 @@ from src.ui import get_services, not_ready, try_call
 
 st.set_page_config(page_title="Search", layout="wide")
 st.title("Search")
+st.write("**Rigan:** tab Order untuk Hash Table. **Rendi:** tab Restoran dan Menu untuk Trie.")
 
 services, errors, data = get_services()
 tab_order, tab_rest, tab_menu = st.tabs(["Order (Hash Table)", "Restoran (Trie)", "Menu (Trie)"])

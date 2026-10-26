@@ -38,6 +38,8 @@ class HashTable:
     BASE = 31  # basis rolling hash polinomial
 
     def __init__(self, capacity: int = 11, max_load: float = 0.75) -> None:
+        if max_load <= 0:
+            raise ValueError("max_load harus positif")
         self.capacity = next_prime(capacity)
         self.max_load = max_load
         self.buckets: list[list[tuple[str, Any]]] = [[] for _ in range(self.capacity)]
@@ -65,23 +67,54 @@ class HashTable:
             "empty_buckets": lengths.count(0),
         }
 
-    # ---------- TODO pemilik modul ----------
+    # ---------- operasi inti ----------
     def hash_function(self, key: str) -> int:
         """Rolling hash polinomial: sum(ord(c) * BASE^i) mod capacity."""
-        raise NotImplementedError("TODO(Hash Owner): HashTable.hash_function")
+        value, power = 0, 1
+        for char in key:
+            value = (value + ord(char) * power) % self.capacity
+            power = power * self.BASE % self.capacity
+        return value
 
     def put(self, key: str, value: Any) -> None:
         """Insert atau update. Cek load factor setelahnya (TC-05, TC-07)."""
-        raise NotImplementedError("TODO(Hash Owner): HashTable.put")
+        bucket = self.buckets[self.hash_function(key)]
+        for i, (stored, _) in enumerate(bucket):
+            self.comparisons += 1
+            if stored == key:
+                bucket[i] = (key, value)
+                return
+        bucket.append((key, value))
+        self.size += 1
+        if self.load_factor() > self.max_load:
+            self.rehash()
 
     def get(self, key: str) -> Optional[Any]:
         """Return value, atau None jika key tidak ada. Rata-rata O(1)."""
-        raise NotImplementedError("TODO(Hash Owner): HashTable.get")
+        for stored, value in self.buckets[self.hash_function(key)]:
+            self.comparisons += 1
+            if stored == key:
+                return value
+        return None
 
     def remove(self, key: str) -> bool:
         """Hapus key. Return True jika berhasil, False jika tidak ada (TC-08)."""
-        raise NotImplementedError("TODO(Hash Owner): HashTable.remove")
+        bucket = self.buckets[self.hash_function(key)]
+        for i, (stored, _) in enumerate(bucket):
+            self.comparisons += 1
+            if stored == key:
+                bucket.pop(i)
+                self.size -= 1
+                return True
+        return False
 
     def rehash(self) -> None:
         """Pindahkan semua pasangan ke tabel baru berukuran next_prime(2 * capacity)."""
-        raise NotImplementedError("TODO(Hash Owner): HashTable.rehash")
+        old = self.buckets
+        self.capacity = next_prime(2 * self.capacity)
+        while self.size / self.capacity > self.max_load:
+            self.capacity = next_prime(2 * self.capacity)
+        self.buckets = [[] for _ in range(self.capacity)]
+        for bucket in old:
+            for key, value in bucket:
+                self.buckets[self.hash_function(key)].append((key, value))

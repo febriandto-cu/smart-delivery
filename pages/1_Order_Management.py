@@ -12,6 +12,11 @@ from src.ui import get_services, not_ready, try_call
 
 st.set_page_config(page_title="Order Management", layout="wide")
 st.title("Order Management")
+st.write("**Bagian Febri Anggoro:** urutan prioritas dan FIFO. "
+         "**Keterkaitan Rigan:** detail order disimpan dan dicari lewat Hash Table.")
+st.page_link("pages/7_Bagian_Individu.py", label="Panduan individu dan simulasi Max-Heap mandiri", icon="↗️")
+st.caption("Max-Heap: skor Urgent=3, High=2, Normal=1. Waktu masuk lebih awal menang; "
+           "sequence menjaga FIFO saat waktu sama.")
 
 services, errors, data = get_services()
 orders = services["order"]
@@ -36,6 +41,7 @@ with left:
                           delivery_location=(5.0, 5.0))
             ok, _ = try_call("Hash Table / Heap", orders.add_order, order)
             if ok:
+                data["orders"].append(order)
                 st.success(f"Order {new_id} ditambahkan dengan prioritas {level.name.title()}.")
 
 with right:

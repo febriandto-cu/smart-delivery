@@ -1,0 +1,22 @@
+{
+  "python": "3.14.2",
+  "os": "Windows-11-10.0.26200-SP0",
+  "processor": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+  "logical_cpus": 12,
+  "ram": "Isi kapasitas RAM secara manual pada laporan",
+  "libraries": {
+    "streamlit": "1.66.1",
+    "pandas": "3.1.0",
+    "altair": "6.3.0",
+    "pytest": "9.1.1"
+  },
+  "seed": 42,
+  "experiment": "E1",
+  "sizes": [
+    10
+  ],
+  "repeats": 5,
+  "warmup": 1,
+  "statistic": "median",
+  "memory": "Satu run terpisah; setup/index awal tidak termasuk"
+}

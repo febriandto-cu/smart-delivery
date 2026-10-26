@@ -11,6 +11,7 @@ from src.ui import get_services, not_ready, try_call
 
 st.set_page_config(page_title="Ranking", layout="wide")
 st.title("Restaurant Ranking")
+st.write("**Bagian Febri Andri:** ranking, pembaruan rating dan rotasi AVL Tree.")
 
 services, errors, data = get_services()
 if errors["ranking"]:

@@ -9,6 +9,8 @@ from src.services.benchmark_service import BASELINE_LIMIT, EXPERIMENTS, run_expe
 
 st.set_page_config(page_title="Performance Lab", layout="wide")
 st.title("Performance Lab")
+st.write("**Bagian Daffa:** kompleksitas, pengujian dan eksperimen. "
+         "Setiap pemilik modul tetap mempelajari hasil pengujian bagiannya.")
 
 exp = st.selectbox("Eksperimen", list(EXPERIMENTS), format_func=lambda e: f"{e} · {EXPERIMENTS[e]}")
 if exp == "E5":
@@ -16,7 +18,10 @@ if exp == "E5":
 else:
     sizes = st.multiselect("Ukuran data (n)", [1_000, 5_000, 10_000, 50_000, 100_000],
                            [1_000, 10_000, 50_000, 100_000])
-repeats = st.slider("Pengulangan per titik (rata-rata)", 1, 5, 3)
+repeats = st.slider("Pengulangan per titik (median)", 5, 15, 5)
+st.caption("Satu warm-up; minimal lima sampel waktu. Peak memory diukur pada run terpisah. "
+           "CSV menyimpan sampel mentah, seed, dan versi lingkungan. "
+           "E1–E5 masih cakupan UTS; eksperimen tambahan direncanakan di UAS Workspace.")
 log_scale = st.checkbox("Sumbu waktu skala log", value=exp == "E5")
 st.caption(f"Baseline dilewati untuk n > {BASELINE_LIMIT[exp]:,} karena terlalu lama.".replace(",", "."))
 
@@ -31,7 +36,7 @@ if df is not None:
     if not plot.empty:
         chart = alt.Chart(plot).mark_line(point=True).encode(
             x=alt.X("n:Q", title="Ukuran input (n)"),
-            y=alt.Y("waktu_ms:Q", title="Waktu rata-rata (ms)",
+            y=alt.Y("waktu_ms:Q", title="Waktu median (ms)",
                     scale=alt.Scale(type="log") if log_scale else alt.Scale()),
             color=alt.Color("implementasi:N", title=None),
             tooltip=["implementasi", "n", "waktu_ms"])
