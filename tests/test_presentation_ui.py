@@ -13,9 +13,12 @@ pytestmark = pytest.mark.usefixtures("csv_dataset")
 
 def test_member_card_opens_correct_guide_and_heap_demo_can_extract_and_reset():
     app = AppTest.from_file(ENTRYPOINT).run(timeout=30)
+    app.switch_page("pages/6_UAS_Workspace.py").run(timeout=30)
     app.button(key="member_Febri Anggoro").click().run(timeout=30)
     assert not app.exception
     assert app.selectbox(key="selected_member").value == "Febri Anggoro"
+    # Sinkronkan rute simulator setelah perpindahan programatik dari kartu.
+    app.switch_page("pages/7_Bagian_Individu.py").run(timeout=30)
     queue = app.session_state.presentation_queue
     assert queue.peek() == "Urgent-A"
     next(b for b in app.button if b.label == "Ambil order tertinggi").click().run()

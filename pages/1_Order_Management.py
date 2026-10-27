@@ -190,4 +190,3 @@ with presenter_tab:
     st.write("**Rigan:** jelaskan bahwa detail order disimpan di Hash Table dan dicari lewat ID.")
     st.write("**Contoh narasi:** ‘Andi masuk lebih awal, tetapi Citra dilayani dahulu karena prioritasnya Urgent. "
              "Dewi menyusul karena prioritas dan waktunya sama, tetapi masuk antrean setelah Citra.’")
-    st.page_link("pages/7_Bagian_Individu.py", label="Buka panduan seluruh anggota", icon="↗️")

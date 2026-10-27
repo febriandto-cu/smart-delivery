@@ -29,7 +29,7 @@ GUIDES = (
          "Serahkan tujuan dan arsitektur kepada Husnu.",
          "Pada penutup, tampilkan hasil tes/eksperimen Daffa dan sebut bagian UAS yang belum selesai."),
         ("Naskah pembukaan dan penutup", "Rekap hasil dan keterbatasan", "Referensi serta kontribusi faktual"),
-        "app.py"),
+        "pages/8_Evidence_Dataset.py"),
     MemberGuide("Husnu", "Tujuan, requirements & arsitektur",
         "Menunjukkan bagaimana kebutuhan bisnis mengalir dari UI ke service, algoritma, dan data.",
         ("src/models.py", "src/ui.py", "src/services/order_service.py", "src/services/delivery_service.py"),

@@ -8,7 +8,7 @@ from src.presentation import FEATURE_MAPPING, GUIDES
 from src.presentation_ui import heap_diagram
 from src.services.evidence_service import collect_cases, dataset_frames, evidence_bundle, evidence_summary
 from src.services.order_demo import create_demo, queue_preview, selection_reason
-from src.ui import get_services
+from src.ui import get_services, reload_csv_services
 
 st.set_page_config(page_title="Evidence & Dataset", layout="wide")
 st.title("Evidence & Dataset")
@@ -46,6 +46,11 @@ dataset_tab, cases_tab, history_tab, results_tab, export_tab = st.tabs([
     "Dataset & distribusi", "Bukti algoritma", "Riwayat demo", "Benchmark & log tes", "Unduh paket bukti"])
 
 with dataset_tab:
+    if not is_demo:
+        if st.button("Muat ulang seluruh CSV"):
+            reload_csv_services()
+            st.rerun()
+        st.caption("Muat ulang mengembalikan data session ke isi CSV sumber.")
     a, b, c = st.columns(3)
     a.metric("Order", len(frames["orders"]))
     b.metric("Restoran", len(frames["restaurants"]))
@@ -92,7 +97,6 @@ with cases_tab:
                 "Pilih Semua anggota untuk melihat hasil algoritma.")
         st.dataframe(pd.DataFrame(FEATURE_MAPPING, columns=["Fitur", "Pemateri teknis", "Struktur", "Key", "Alasan"]),
                      hide_index=True, width="stretch")
-        st.page_link("pages/7_Bagian_Individu.py", label="Buka tugas dan bukti bagian individu", icon="↗️")
     else:
         summary = evidence_summary(filtered)
         st.dataframe(summary, hide_index=True, width="stretch")

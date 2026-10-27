@@ -23,7 +23,10 @@ python -m venv .venv
 Buka `http://localhost:8501`. Perintah langsung ke virtual environment tidak
 memerlukan aktivasi PowerShell. Di macOS/Linux gunakan `.venv/bin/python`.
 
-Beranda menampilkan **kartu sembilan anggota**. Klik **Buka bagian saya** atau
+Aplikasi langsung membuka **Order Management**; halaman beranda “app” disembunyikan.
+**UAS Workspace** dan **Bagian Individu** juga disembunyikan dari sidebar dan
+tautan pada halaman fitur. File serta URL internalnya tetap tersedia.
+Menu **UAS Workspace** menampilkan kartu sembilan anggota. Klik **Buka bagian saya** atau
 buka menu **Bagian Individu**, lalu pilih nama. Tersedia tiga tab:
 
 - **Tugas & alur presentasi:** materi yang disiapkan dan urutan demonstrasi.
@@ -94,7 +97,7 @@ bukan pengukuran industri. **Aplikasi langsung membaca seluruh baris** dari
 atau pengganti acak. CSV lokal saat perubahan ini berisi 100.000 order, 10.000
 restoran, dan 50.000 menu. Jumlah aktual selalu mengikuti isi file.
 
-Beranda menyediakan **Muat ulang seluruh CSV**. CSV yang berubah dideteksi
+Menu **Evidence & Dataset** menyediakan **Muat ulang seluruh CSV**. CSV yang berubah dideteksi
 melalui signature file dan dimuat ulang otomatis. Aksi tambah/proses/batal/rating
 berlaku dalam session; file asli tidak ditimpa. Memuat ulang mengembalikan isi CSV
 serta mengosongkan log aksi operasional. CSV yang tidak lengkap/invalid menghasilkan
@@ -136,7 +139,8 @@ Detail slide dan durasi: `src/uas.py`, UAS Workspace, dan
 ## Struktur proyek
 
 ```text
-app.py                  Kartu sembilan anggota, dataset dan status teknis
+app.py                  Navigasi; langsung membuka Order Management
+src/home.py             Arsip beranda lama, tidak tampil pada navigasi
 pages/                  5 fitur aplikasi + UAS Workspace + Bagian Individu
 src/presentation.py     Tugas, alur demo, file dan bukti per pemateri
 src/presentation_ui.py  Panduan per anggota dan demo interaktif mandiri

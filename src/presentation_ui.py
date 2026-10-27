@@ -205,7 +205,8 @@ def render_member(name: str) -> None:
         st.subheader("Urutan saat presentasi")
         for i, step in enumerate(guide.demo_steps, 1):
             st.write(f"{i}. {step}")
-        st.page_link(guide.page, label="Buka halaman aplikasi yang saya jelaskan", icon="↗️")
+        target = "pages/8_Evidence_Dataset.py" if guide.page == "app.py" else guide.page
+        st.page_link(target, label="Buka halaman aplikasi yang saya jelaskan", icon="↗️")
     with demo_tab:
         demos = {"Febri Anggoro": _heap_demo, "Rigan": _hash_demo, "Rendi": _trie_demo,
                  "Febri Andri": _avl_demo, "M Febri": _dp_demo, "Daffa": _qa_demo}
